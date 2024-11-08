@@ -6,6 +6,12 @@ import useAuth, { AuthProvider } from "../hooks/useAuth";
 export default function RootLayout() {
   
   const { user } = useAuth();
+  if(user){
+    console.log("Used logged");
+  }
+  else{
+    console.log("No user");
+  }
   
   return (
     <AuthProvider>

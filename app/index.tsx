@@ -8,7 +8,15 @@ import useAuth from "@/hooks/useAuth";
 
 
 export default function Index() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if(user){
+    console.log("User logged");
+  }
+  else{
+    console.log("No user");
+  }
+
   return (
       <SafeAreaView style={styles.container}>
         <Stack.Screen
@@ -18,11 +26,11 @@ export default function Index() {
         />
         <View>
           <Text style={styles.title}>FoodDelivery</Text>
-          <Text style={styles.subtitle}>{user ? "Welcome back "+user : "Please login to continue"}</Text>
+          {loading ? <></> : <Text style={styles.subtitle}>{user ? "Welcome back" : "Please login to continue"}</Text>}
         </View>
         <Image resizeMode='contain' style={styles.image} source={require("../assets/images/food_logo.png")} />
         <View>
-          <Link style={styles.button} href="/home">Continue</Link>
+          <Link style={styles.button} href="/login">Continue</Link>
         </View>
       </SafeAreaView>
   );
