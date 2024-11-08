@@ -1,54 +1,63 @@
-import { Stack } from "expo-router";
-import { Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Categories } from "@/components/Categories";
-import FeaturedRow from "@/components/FeaturedRow";
+import { auth } from "../firebase";
+import { useRouter } from 'expo-router';
+import useAuth from '@/hooks/useAuth';
 
-function CustomHeader() {
-  return (
-    <SafeAreaView style={styles.header}>
-      <Image style={styles.image} source={require("../assets/images/food_logo.png")} />
-      <View style={{flex: 1}}><Text style={{fontWeight: 'bold', alignSelf: "center", fontSize: 20}}>Home</Text></View>
-      <AntDesign name="user" size={30} color="black" />
-    </SafeAreaView>
-  );
-}
+const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const { user, signIn } = useAuth();
 
-export default function Login() {
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged((user: string) => {
+      if (user) {
+        router.replace('/home');
+      }
+    });
+
+    return unsub;
+  }, []);
+
+  const handleLogin = () => {
+    signIn(email, password);
+  };
+
+  const handleRegister = () => {
+    auth.createUserWithEmailandPassword(email, password);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          header: props => <CustomHeader {...props} />,
-        }}
-      />
-      <ScrollView>
-        <Categories />
-        <FeaturedRow 
-          id="10"
-          title="Featured"
+      <SafeAreaView style={styles.container}>
+        <TextInput
+          placeholder="Username"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
         />
-      </ScrollView>
-    </SafeAreaView>
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+        />
+        <Button onPress={handleLogin} title="Login" />
+        <Text>or</Text>
+        <Button color="#f194ff" onPress={handleRegister} title="Register" />
+      </SafeAreaView>
   );
-}
+};
+
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: 'space-evenly',
   },
-  image: {
-    width: 50,
-    height: 50,
-  },
-  header: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'flex-end',
-    backgroundColor: 'white',
-    padding: 4,
-  },
+  input: {},
 });

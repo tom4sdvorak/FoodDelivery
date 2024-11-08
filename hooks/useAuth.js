@@ -8,10 +8,22 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
+  
+  const signIn = async (email, password) => {
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+
+    }
+    catch (error) {
+      return null;
+    }
+  }
+
   return (
     <AuthContext.Provider value={
         {
-            user: "Sonny"
+            user: null,
+            signIn
         }
     }>
       {children}
